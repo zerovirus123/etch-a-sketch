@@ -9,6 +9,7 @@ let globals =
 const colorButton = document.getElementById("color-button");
 const rainbowButton = document.getElementById("rainbow-button");
 const eraserButton = document.getElementById("eraser-button");
+const rainbowBombButton = document.getElementById("rainbow-bomb-button");
 const clearButton = document.getElementById("clear-button");
 
 function setColorMode(colorMode)
@@ -24,24 +25,27 @@ function setColorMode(colorMode)
     globals.currentColorMode = colorMode;
 }
 
-function changeColor(e){
+function generateRandomRGB(){
+    const R = Math.floor(Math.random() * 256);
+    const G = Math.floor(Math.random() * 256);
+    const B = Math.floor(Math.random() * 256);
+    return [R, G, B];
+}
 
+function changeColor(e)
+{
     if(e.type === 'mouseover' && e.type && !globals.mouseDown) return;
     
     if(globals.currentColorMode === 'rainbow'){
-        const R = Math.floor(Math.random() * 256);
-        const G = Math.floor(Math.random() * 256);
-        const B = Math.floor(Math.random() * 256);
-        e.target.style.backgroundColor = `rgb(${R}, ${G}, ${B})`;
+        const RGB = generateRandomRGB();
+        e.target.style.backgroundColor = `rgb(${RGB[0]}, ${RGB[1]}, ${RGB[2]})`;
     }
     else if (globals.currentColorMode === 'color'){
-        console.log(document.getElementById('color-picker').value);
         e.target.style.backgroundColor = document.getElementById('color-picker').value;
     }
     else if (globals.currentColorMode === 'eraser'){
         e.target.style.backgroundColor = "#ffffff";
     }
-
 }
 
 function updateGridSize(value)
@@ -71,12 +75,12 @@ function drawGrid(gridDimension)
 {
     let div_container = document.getElementById("div__container");
     
-    for(let i = 0; i < gridDimension; i++)
+    for(let i = 1; i <= gridDimension; i++)
     {
         let row = document.createElement("div");
         row.className = "row";
 
-        for(let j = 0; j < gridDimension; j++)
+        for(let j = 1; j <= gridDimension; j++)
         {
             let cell = document.createElement("div");
             cell.className = "cell";
@@ -86,6 +90,42 @@ function drawGrid(gridDimension)
         div_container.appendChild(row);
     }
     globals.grid_size = gridDimension;
+}
+
+function random_select(rows, numRandomSelects)
+{
+    for(let i = rows.length - 1; i > 0; i--)
+    {
+        let j = Math.floor(Math.random() * (i));
+        let temp = rows[i];
+        rows[i] = rows[j];
+        rows[j] = temp;
+    }
+    return rows.slice(0, numRandomSelects);
+}
+
+function rainbowBomb()
+{
+    let numRandomSelects = Math.floor(globals.grid_size / 2);
+    let div_container = document.getElementById("div__container");
+    let rowNodes = Array.from(div_container.childNodes).filter(function(element){
+        return element.nodeType == 1;
+    });
+    let randomRows = random_select(rowNodes, numRandomSelects);
+
+    randomRows.forEach(function(row)
+    {
+        cellNodes = Array.from(row.childNodes).filter(function (element) {
+            return element.nodeType == 1;
+        });
+
+        randomCells = random_select(cellNodes, numRandomSelects);
+
+        randomCells.forEach(function(cell){
+            const RGB = generateRandomRGB();
+            cell.style.backgroundColor = `rgb(${RGB[0]}, ${RGB[1]}, ${RGB[2]})`;
+        });
+    });
 }
 
 const sizeSlider = document.getElementById('size-slider');
@@ -119,6 +159,10 @@ eraserButton.addEventListener('click', () => {
 clearButton.addEventListener('click', () => {
     clearGrid();
     drawGrid(globals.grid_size);
+});
+
+rainbowBombButton.addEventListener('click', () =>{
+    rainbowBomb();
 });
 
 document.getElementById('div__container').addEventListener('mousedown', (e) => {
