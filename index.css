@@ -1,0 +1,50 @@
+h1{
+    font-size: 80px;
+    text-align: center;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+}
+
+.div__container{
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.7) 6px 6px 6px 6px;
+}
+
+.row{
+    display: flex;
+}
+
+.cell{
+    background-color: #ffffff;
+    transition: all 0.1s ease-in-out;
+}
+
+.slider__container{
+    justify-content: center;
+}
+
+.size__container{
+    padding-left: 3rem;
+}
+
+.buttons-container{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.button{
+    flex: 50%;
+    height: fit-content;
+    padding: 20px;
+}
+
+.active{
+    background-color: #302d2d;
+    color: #e0dada;
+}
